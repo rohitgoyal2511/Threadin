@@ -1,16 +1,21 @@
 package com.example.threadin.models;
 
 import java.util.Date;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -65,13 +70,16 @@ public class HRModel extends AuditModel {
 	
 	@Column(name="about_us_link")
 	private String aboutUs;
+	
+	@OneToMany(mappedBy = "hrModel",cascade=CascadeType.ALL, orphanRemoval = true)
+	private Set<OffersModel> offers;
 
 	public HRModel() {
 		super();
 	}
 
-	public HRModel(long id, String name, @Email String emailId, Gender gender, Date dob, String[] mobile, byte[] pic,
-			@NotBlank String organization, String designation, String aboutUs) {
+	public HRModel(long id, String name, @Email String emailId, Gender gender, @Past Date dob, String[] mobile,
+			byte[] pic, @NotBlank String organization, String designation, String aboutUs, Set<OffersModel> offers) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -83,8 +91,9 @@ public class HRModel extends AuditModel {
 		this.organization = organization;
 		this.designation = designation;
 		this.aboutUs = aboutUs;
+		this.offers = offers;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -163,5 +172,14 @@ public class HRModel extends AuditModel {
 
 	public void setAboutUs(String aboutUs) {
 		this.aboutUs = aboutUs;
+	}
+	
+	@JsonIgnore
+	public Set<OffersModel> getOffers() {
+		return offers;
+	}
+
+	public void setOffers(Set<OffersModel> offers) {
+		this.offers = offers;
 	}
 }
